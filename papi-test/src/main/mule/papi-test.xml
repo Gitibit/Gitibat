@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6c7dbdcc-9587-4663-aa3b-7d5c1a75b6ee" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="be73d511-11b5-48b4-a45e-b26eca845a62" basePath="/api">
+		<http:request-connection host="new-contact-sapi.us-e2.cloudhub.io" />
+	</http:request-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="0300b042-b9e2-44ec-9b3f-498c0680022b" >
+		<salesforce:basic-connection username="sofnet@2022.com" password="azx123321Z" securityToken="F1krpqQnrkhXnkymY9pifMQBJ" />
+	</salesforce:sfdc-config>
+	<flow name="from_aws_to_localhost_data_transferFlow" doc:id="8a2e99b9-3c31-42f6-90e7-00f3455bf944" >
+		<http:listener doc:name="Listener" doc:id="2c9b9a3f-abcb-4328-b988-f875567b7c17" config-ref="HTTP_Listener_config" path="papi"/>
+		<http:request method="GET" doc:name="Request" doc:id="bd3657e5-1ac5-4e56-843f-521a91767d3c" config-ref="HTTP_Request_configuration" path="/contact"/>
+		<ee:transform doc:name="Transform Message" doc:id="cdf7d4a6-28d6-4ea3-8049-a41670726b02">
+			<ee:message>
+				<ee:set-payload><![CDATA[    %dw 2.0
+    output application/json
+    ---
+    payload as Iterator]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Lead" doc:name="Create" doc:id="affc92c8-e677-4a21-a553-73f4c4ba9972" config-ref="Salesforce_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ea752f91-3881-4dd6-99d4-55639b2c3341" message="#[payload]"/>
+	</flow>
+</mule>
