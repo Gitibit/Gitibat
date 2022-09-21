@@ -174,7 +174,7 @@ movieLists map(movieListvalue)->{
 		]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="3e87b856-99d1-45bf-8be9-a8fcce05e3ce" />
+		<logger level="INFO" doc:name="Logger" doc:id="3e87b856-99d1-45bf-8be9-a8fcce05e3ce" message="#[payload.movieTitle]"/>
     </flow>
     <flow name="post:\movie:application\json:movie-api-config">
         <ee:transform doc:id="edebee3b-af47-49d9-b677-53e7b8e43fde">
