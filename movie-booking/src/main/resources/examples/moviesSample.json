@@ -1,0 +1,12 @@
+[{
+    	"movieID": 1,
+      "movieTitle": "Titanic",
+      "cinemaCode": "cin-01",
+      "startingTime": "10AM",
+      "endingTime": "12AM",
+      "movieType": "Romance",
+      "price": 20,
+	"postDate" : "2022-09-20"
+
+     }
+    ] 
