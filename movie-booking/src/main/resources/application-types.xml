@@ -18,13 +18,22 @@ type movielist = Array<{|  movieID: Number {"typeId": "int"},   movieTitle: Stri
       </types:input-event>
     </types:processor-declaration>
   </types:enrichment>
-  <types:enrichment select="#79cb5ced-4743-4fd9-b6b1-22dfa3a5b9d4">
+  <types:enrichment select="#4a2a597d-fb43-465e-b37d-f1279f5dc578">
     <types:processor-declaration>
       <types:input-event>
         <types:message>
           <types:payload type="movielist"/>
         </types:message>
       </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="movielist"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#bd8ca94a-15bc-46f0-86af-7902c98b3577">
+    <types:processor-declaration>
       <types:output-event>
         <types:message>
           <types:payload type="movielist"/>

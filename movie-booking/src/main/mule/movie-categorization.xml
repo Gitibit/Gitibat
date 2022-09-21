@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="movie-categorizationFlow" doc:id="9eb79af4-05a6-4cd6-a9d5-17da5d7ba7d2" >
+		<db:listener doc:name="On Table Row" doc:id="ff2e048a-319d-4bee-a579-5afc7d777506" config-ref="Database_Config" table="movies" watermarkColumn="movieID">
+			<scheduling-strategy >
+				<fixed-frequency frequency="10000"/>
+			</scheduling-strategy>
+		</db:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="94a984fd-2ccd-4d33-981b-1325e4ce19e6" message="#[payload.movieType]"/>
+		<ee:transform doc:name="listOfMovies" doc:id="bd8ca94a-15bc-46f0-86af-7902c98b3577">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload.movieType]" doc:name="movieType" doc:id="9a30817f-67bd-44ff-93c7-8be7b77cf956" variableName="movieType" />
+		<choice doc:name="checkMovieType" doc:id="3b13c1dd-9f21-40e9-9fdf-2a8129f48a60" >
+			<when expression="#[payload.movieType == 'comedy']" >
+				<db:insert doc:name="Insert" doc:id="d8f29807-1df9-48c0-94b1-3f5577572b64" config-ref="Database_Config">
+					<db:sql ><![CDATA[insert into showtime.comedymovielists (movieTitle, movieType, endingTime, startingTime, cinemaCode, price) 
+values (:movieTitle, :movieType, :endingTime, :startingTime, :cinemaCode, :price)]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	movieTitle:payload.movieTitle, 
+	movieType:payload.movieType, 
+	endingTime:payload.endingTime, 
+	startingTime:payload.startingTime, 
+	cinemaCode:payload.cinemaCode,
+	price: payload.price
+}]]]></db:input-parameters>
+				</db:insert>
+			</when>
+			<otherwise>
+				<set-payload value='#["movieType is not comedy"]' doc:name="Set Payload" doc:id="0bcd71b2-6c1d-403e-bf4a-2128fbbc1444" />
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="endOfFlow" doc:id="30af046f-46d4-421a-8bd3-4c5c553b2b97" message="#[payload]" />
+	</flow>
+</mule>

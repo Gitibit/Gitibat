@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-    <http:listener-config name="movie-api-httpListenerConfig">
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <http:listener-config name="movie-api-httpListenerConfig" tracking:enable-default-events="false">
         <http:listener-connection host="0.0.0.0" port="8082" />
     </http:listener-config>
     <apikit:config name="movie-api-config" api="api\movie-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
@@ -127,7 +128,7 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\movie:movie-api-config">
+    <flow name="get:\movie:movie-api-config" doc:id="cbddd8ea-9b96-4a2e-8d10-80c69f72fc3b">
         <logger level="INFO" doc:name="Logger" doc:id="58bd11bc-75bd-44b0-b393-4db2472bd673" />
 		<scatter-gather doc:name="Scatter-Gather" doc:id="83711b76-616d-4e97-b6b4-b92a43283627" >
 			<route >
@@ -176,7 +177,7 @@ movieLists map(movieListvalue)->{
         </ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="3e87b856-99d1-45bf-8be9-a8fcce05e3ce" message="#[payload.movieTitle]"/>
     </flow>
-    <flow name="post:\movie:application\json:movie-api-config">
+    <flow name="post:\movie:application\json:movie-api-config" doc:id="afdbb101-f9ee-4d41-8da2-2ae9a7d66043">
         <ee:transform doc:id="edebee3b-af47-49d9-b677-53e7b8e43fde">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
