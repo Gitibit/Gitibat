@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
     <http:listener-config name="movie-api-httpListenerConfig" tracking:enable-default-events="false">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
@@ -128,7 +129,7 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\movie:movie-api-config" doc:id="bb3c14f4-5ea2-4860-91a2-9e048f2d3fad">
+	<flow name="get:\movie:movie-api-config" doc:id="bb3c14f4-5ea2-4860-91a2-9e048f2d3fad">
         <logger level="INFO" doc:name="Logger" doc:id="fd3bfd6e-2c2f-48eb-97e7-f124391599b6" />
 		<scatter-gather doc:name="Scatter-Gather" doc:id="2da0fda7-6c39-4cd3-8e98-87fa4ad38ed9" >
 			<route >
@@ -200,5 +201,11 @@ payload map(values)->{
                  values(:movieTitle, :movieType, :cinemaCode, :startingTime, :endingTime, :price,:postDate)]]></db:sql>
 		</db:bulk-insert>
 		<set-payload value='#["movies uploaded successfully!"]' doc:name="movie-uploaded" doc:id="fbbbe6f7-72b1-49aa-9e65-f036bdb5a7bb" />
-    </flow>
+		<db:select doc:name="Select" doc:id="ff5500d6-d67f-4e8e-99ac-2280cbc89684" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM showtime.movies;]]></db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="2a33aeb6-8864-44c8-b469-182053c57630" message="#[%dw 2.0&#10;output application/json --- payload]"/>
+    
+</flow>
+
 </mule>
