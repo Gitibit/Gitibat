@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/em
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
     <apikit:config name="movie-api-config" api="api\movie-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-	<db:config name="Database_Config" doc:name="Database Config" doc:id="550d669e-8111-440c-9036-0d81e4924ffc" >
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="550d669e-8111-440c-9036-0d81e4924ffc" level="INFO" message="#[%dw 2.0&#10;output application/json --- payload]" category="">
 		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="showtime" />
 	</db:config>
 	<flow name="movie-api-main">
@@ -182,7 +182,7 @@ movieLists map(movieListvalue)->{
         <ee:transform doc:id="f4a3dbb4-7178-4313-be95-7d0206f67ce9">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 payload map(values)->{
 	movieTitle: values.movieTitle,
